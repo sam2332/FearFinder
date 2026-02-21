@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}FearFinder — Discover Your Fears{% endblock %}
+
+{% block content %}
+<div class="home-screen">
+    <div class="logo">
+        <span class="logo-icon">👁️</span>
+        <h1>FearFinder</h1>
+    </div>
+    <p class="tagline">How brave are you, really?</p>
+    <p class="description">
+        Take this quiz to explore <strong>{{ total }} real phobias</strong>.
+        Each one comes with a short story that puts you in the moment.
+        Then tell us — how would <em>you</em> react?
+    </p>
+
+    {% if user and remaining > 0 %}
+    <!-- Returning user with unanswered fears -->
+    <div class="resume-section">
+        <p class="welcome-back">Welcome back, <strong>{{ user.name }}</strong>!</p>
+        <p class="progress-info">
+            You've answered <strong>{{ total_answered }}</strong> of <strong>{{ total }}</strong> fears.
+            <strong>{{ remaining }}</strong> remaining.
+        </p>
+        <form action="{{ url_for('start') }}" method="POST">
+            <input type="hidden" name="name" value="{{ user.name }}" />
+            <button type="submit" class="btn btn-primary">Continue Quiz →</button>
+        </form>
+        <form action="{{ url_for('results') }}" method="GET" style="margin-top: 0.5rem;">
+            <button type="submit" class="btn btn-secondary">View Current Results</button>
+        </form>
+    </div>
+    <hr class="divider" />
+    <p class="or-text">Or start as someone else:</p>
+    {% elif user and remaining == 0 %}
+    <!-- Returning user who finished everything -->
+    <div class="resume-section">
+        <p class="welcome-back">Welcome back, <strong>{{ user.name }}</strong>!</p>
+        <p class="progress-info">You've completed all <strong>{{ total }}</strong> fears!</p>
+        <form action="{{ url_for('results') }}" method="GET" style="margin-top: 0.5rem;">
+            <button type="submit" class="btn btn-primary">View Your Results</button>
+        </form>
+    </div>
+    <hr class="divider" />
+    <p class="or-text">Or start as someone else:</p>
+    {% endif %}
+
+    <form action="{{ url_for('start') }}" method="POST" class="name-form">
+        <label for="name">Enter your name to begin</label>
+        <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your name…"
+            required
+            autofocus
+            maxlength="50"
+        />
+        <button type="submit" class="btn btn-primary">Start the Quiz</button>
+    </form>
+
+    <div class="fear-count-badge">{{ total }} fears &middot; {{ total }} stories &middot; 1 brave soul</div>
+</div>
+{% endblock %}

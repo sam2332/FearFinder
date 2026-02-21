@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}FearFinder — {{ fear.name }}{% endblock %}
+
+{% block content %}
+<div class="quiz-screen">
+    <!-- Header -->
+    <div class="quiz-header">
+        <span class="player-name">{{ name }}</span>
+        <span class="progress-text">{{ current }} / {{ total }}</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: {{ progress }}%"></div>
+    </div>
+
+    {% if total_queue < total %}
+    <p class="remaining-info">{{ remaining }} new question{{ 's' if remaining != 1 }} remaining</p>
+    {% endif %}
+
+    <!-- Fear title -->
+    <div class="fear-title">
+        <h2>{{ fear.name }}</h2>
+        <span class="fear-of">Fear of: {{ fear.fear_of }}</span>
+    </div>
+
+    <!-- Story card -->
+    <div class="story-card">
+        <div class="story-label">📖 The Story</div>
+        <p class="story-text">{{ fear.story }}</p>
+    </div>
+
+    <!-- Question -->
+    <div class="question-section">
+        <h3>{{ fear.question }}</h3>
+        <form action="{{ url_for('answer') }}" method="POST" class="options-form">
+            {% for option in fear.options %}
+            <label class="option-card">
+                <input type="radio" name="option" value="{{ loop.index0 }}" required />
+                <span class="option-text">{{ option }}</span>
+            </label>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Next →</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

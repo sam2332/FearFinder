@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}FearFinder — {{ name }}'s Results{% endblock %}
+
+{% block content %}
+<div class="results-screen">
+    <h1>{{ name }}'s Fear Profile</h1>
+
+    <!-- Fear score gauge -->
+    <div class="score-section">
+        <div class="score-circle" style="--score: {{ fear_score }}">
+            <span class="score-number">{{ fear_score }}%</span>
+        </div>
+        <p class="score-label">Overall Fear Score</p>
+        <p class="score-description">
+            {% if fear_score >= 70 %}
+                You experience a high level of fear across many situations. It's okay — awareness is the first step.
+            {% elif fear_score >= 40 %}
+                You have a moderate fear profile. Some things genuinely scare you, but you manage most situations.
+            {% elif fear_score >= 15 %}
+                You're fairly brave! Only a few things really get to you.
+            {% else %}
+                Almost fearless! Very little seems to shake you.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Severe fears -->
+    {% if severe %}
+    <div class="result-group severe">
+        <h2>🔴 Extreme Fears ({{ severe|length }})</h2>
+        <p class="group-description">These phobias trigger a strong fear response in you.</p>
+        <div class="fear-chips">
+            {% for f in severe %}
+            <div class="fear-chip chip-severe">
+                <strong>{{ f.name }}</strong>
+                <span>{{ f.fear_of }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Moderate fears -->
+    {% if moderate %}
+    <div class="result-group moderate">
+        <h2>🟠 Notable Fears ({{ moderate|length }})</h2>
+        <p class="group-description">These make you quite uncomfortable but you can still function.</p>
+        <div class="fear-chips">
+            {% for f in moderate %}
+            <div class="fear-chip chip-moderate">
+                <strong>{{ f.name }}</strong>
+                <span>{{ f.fear_of }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mild fears -->
+    {% if mild %}
+    <div class="result-group mild">
+        <h2>🟡 Mild Discomfort ({{ mild|length }})</h2>
+        <p class="group-description">Slightly uneasy, but nothing you can't handle.</p>
+        <div class="fear-chips">
+            {% for f in mild %}
+            <div class="fear-chip chip-mild">
+                <strong>{{ f.name }}</strong>
+                <span>{{ f.fear_of }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- No fear -->
+    {% if no_fear %}
+    <div class="result-group none">
+        <h2>🟢 No Fear ({{ no_fear|length }})</h2>
+        <p class="group-description">These don't faze you at all.</p>
+        <div class="fear-chips">
+            {% for f in no_fear %}
+            <div class="fear-chip chip-none">
+                <strong>{{ f.name }}</strong>
+                <span>{{ f.fear_of }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Summary stats -->
+    <div class="summary-stats">
+        <div class="stat">
+            <div class="stat-number">{{ severe|length }}</div>
+            <div class="stat-label">Extreme</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ moderate|length }}</div>
+            <div class="stat-label">Notable</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ mild|length }}</div>
+            <div class="stat-label">Mild</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ no_fear|length }}</div>
+            <div class="stat-label">No Fear</div>
+        </div>
+    </div>
+
+    {% if unanswered_count > 0 %}
+    <div class="unanswered-notice">
+        <p>You still have <strong>{{ unanswered_count }}</strong> unanswered fear{{ 's' if unanswered_count != 1 }}.</p>
+        <form action="{{ url_for('start') }}" method="POST" style="display:inline;">
+            <input type="hidden" name="name" value="{{ name }}" />
+            <button type="submit" class="btn btn-primary">Answer Remaining Questions →</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <p class="answered-summary">Based on {{ total_answered }} of {{ total }} fears answered.</p>
+
+    <a href="{{ url_for('home') }}" class="btn btn-primary retake-btn">Back to Home</a>
+
+    <form action="{{ url_for('reset') }}" method="POST" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-secondary" onclick="return confirm('Reset all your answers?')">Reset My Answers</button>
+    </form>
+</div>
+{% endblock %}
